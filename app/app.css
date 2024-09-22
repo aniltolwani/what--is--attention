@@ -1,0 +1,183 @@
+/* src/App.css */
+
+.container {
+  font-family: 'Roboto', Arial, sans-serif;
+  padding: 40px;
+  max-width: 1200px;
+  margin: auto;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 3rem;
+  color: #2c3e50;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sentence {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.5rem;
+  color: #34495e;
+}
+
+.token {
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  border-radius: 8px;
+  margin: 0 6px;
+  background: linear-gradient(45deg, #6dd5fa, #2980b9);
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.token:hover {
+  background: linear-gradient(45deg, #2980b9, #6dd5fa);
+  transform: scale(1.05);
+}
+
+.highlight {
+  background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+  color: #2c3e50;
+  box-shadow: 0 0 15px rgba(255, 154, 158, 0.6);
+  transform: scale(1.1);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px 0;
+  gap: 25px;
+}
+
+.controls button {
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #ff6a00, #ee0979);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.controls button:hover {
+  background: linear-gradient(45deg, #ee0979, #ff6a00);
+  transform: scale(1.05);
+}
+
+.progress-bar {
+  width: 250px;
+  height: 12px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6a00, #ee0979);
+  transition: width 0.5s ease-in-out;
+}
+
+.detail-panel {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  width: 350px;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  max-height: calc(100vh - 60px);
+  backdrop-filter: blur(10px);
+}
+
+.detail-panel h2 {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 2rem;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 10px;
+}
+
+.detail-panel p {
+  margin-bottom: 15px;
+  color: #34495e;
+  font-size: 1.1rem;
+}
+
+.detail-panel ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.detail-panel li {
+  padding: 6px 0;
+  color: #7f8c8d;
+  font-size: 1rem;
+  position: relative;
+  padding-left: 20px;
+}
+
+.detail-panel li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #ff6a00;
+}
+
+.tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip.visible {
+  opacity: 1;
+}
+
+.visualization-container {
+  width: 100%;
+  height: 80vh;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  border-radius: 15px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+@keyframes pulse {
+  0% {
+    stroke-width: 2;
+    opacity: 0.7;
+  }
+  50% {
+    stroke-width: 4;
+    opacity: 1;
+  }
+  100% {
+    stroke-width: 2;
+    opacity: 0.7;
+  }
+}
+
+.attention-pulse {
+  animation: pulse 2s infinite;
+}

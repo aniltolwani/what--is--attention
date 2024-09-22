@@ -3,9 +3,10 @@ import * as d3 from 'd3';
 
 interface BezierCurveProps {
     controlPointX: number;
+    controlPointY: number;
 }
 
-const BezierCurve: React.FC<BezierCurveProps> = ({ controlPointX }) => {
+const BezierCurve: React.FC<BezierCurveProps> = ({ controlPointX, controlPointY }) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
 
     useEffect(() => {
@@ -15,13 +16,13 @@ const BezierCurve: React.FC<BezierCurveProps> = ({ controlPointX }) => {
         svg.append("path")
             .attr("d", d3.line().curve(d3.curveBasis)([
                 [100, 100],
-                [controlPointX, 200],
+                [controlPointX, controlPointY],
                 [300, 100]
             ]) as string)
             .attr("stroke", "orange")
             .attr("fill", "none")
             .attr("stroke-width", 3);
-    }, [controlPointX]);
+    }, [controlPointX, controlPointY]);
 
     return <svg ref={svgRef} width={400} height={300}></svg>;
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import * as d3 from 'd3';
 
 interface ElasticAnimationProps {
@@ -8,26 +8,37 @@ interface ElasticAnimationProps {
 
 const ElasticAnimation: React.FC<ElasticAnimationProps> = ({ tension, friction }) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
+    const circleRef = useRef<d3.Selection<SVGCircleElement, unknown, null, undefined> | null>(null);
 
-    useEffect(() => {
+    const updateAnimation = () => {
+        if (!svgRef.current) return;
+
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove();
 
-        const circle = svg.append("circle")
-            .attr("cx", 50)
-            .attr("cy", 150)
+        circleRef.current = svg.append("circle")
+            .attr("cx", 80)
+            .attr("cy", 200)
             .attr("r", 20)
             .attr("fill", "steelblue");
 
-        circle.transition()
-            .duration(1000)
-            .ease(d3.easeElastic)
-            .attr("cx", 300)
-            .transition()
-            .duration(1000)
-            .ease(d3.easeElastic)
-            .attr("cx", 50);
-    }, [tension, friction]);
+        const animate = () => {
+            circleRef.current?.transition()
+                .duration(1000)
+                .ease(d3.easeElastic.period(1 / tension))
+                .attr("cx", 300)
+                .transition()
+                .duration(1000)
+                .ease(d3.easeElastic.period(1 / tension))
+                .attr("cx", 50)
+                .on("end", animate);
+        };
+
+        animate();
+    };
+
+    // Run the animation update on every render
+    updateAnimation();
 
     return <svg ref={svgRef} width={400} height={300}></svg>;
 };

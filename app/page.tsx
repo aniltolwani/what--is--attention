@@ -1,167 +1,51 @@
-"use client";
-
+// App Component in app/page.tsx
+'use client'
 import React, { useState } from 'react';
-import BezierCurve from './components/BezierCurve';
-import ElasticAnimation from './components/ElasticAnimation';
-import DimensionalDepth from './components/DimensionalDepth';
-import ForceDirectedGraph from './components/ForceDirectedGraph';
-import ReactSpringAnimation from './components/ReactSpringAnimation';
-import ReactThreeFiberVisualization from './components/ReactThreeFiberVisualization';
-import Heatmap from './components/Heatmap';
-import ChordDiagram from './components/ChordDiagram';
-import SankeyDiagram from './components/SankeyDiagram';
-import VoronoiDiagram from './components/VoronoiDiagram';
-import './styles/WordEmbeddingVisualization.css';
+import VectorArithmetic from './components/VectorArithmetic';
+import VectorVisualization from './components/VectorVisualization';
+import VectorOperation from './types/vectorInterfaces';
 
-const AppPage: React.FC = () => {
-    const [bezierControlX, setBezierControlX] = useState(200);
-    const [bezierControlY, setBezierControlY] = useState(200);
-    const [elasticTension, setElasticTension] = useState(200);
-    const [elasticFriction, setElasticFriction] = useState(10);
-    const [forceDistance, setForceDistance] = useState(100);
+/**
+ * App Component serves as the main entry point of the application.
+ * It manages the state of vector operations and renders the VectorArithmetic
+ * and VectorVisualization components side by side.
+ *
+ * @returns {JSX.Element} The main application layout.
+ */
+const App: React.FC = () => {
+  // State to hold the current vector operation
+  const [operation, setOperation] = useState<VectorOperation | null>(null);
 
-    const attentionWeights = [
-        [0.1, 0.2, 0.3, 0.4, 0.5],
-        [0.2, 0.3, 0.4, 0.5, 0.6],
-        [0.3, 0.4, 0.5, 0.6, 0.7],
-        [0.4, 0.5, 0.6, 0.7, 0.8],
-        [0.5, 0.6, 0.7, 0.8, 0.9],
-    ];
+  /**
+   * Handles the computation of a new vector operation.
+   *
+   * @param {VectorOperation} newOperation - The newly computed vector operation.
+   */
+  const handleCompute = (newOperation: VectorOperation) => {
+    setOperation(newOperation);
+  };
 
-    const tokens = ['Token 1', 'Token 2', 'Token 3', 'Token 4', 'Token 5'];
-
-    const attentionMatrix = [
-        [0.1, 0.2, 0.3, 0.4, 0.5],
-        [0.2, 0.3, 0.4, 0.5, 0.6],
-        [0.3, 0.4, 0.5, 0.6, 0.7],
-        [0.4, 0.5, 0.6, 0.7, 0.8],
-        [0.5, 0.6, 0.7, 0.8, 0.9],
-    ];
-
-    const sankeyData = {
-        nodes: ['Token 1', 'Token 2', 'Token 3', 'Token 4', 'Token 5'],
-        links: [
-            { source: 'Token 1', target: 'Token 2', value: 10 },
-            { source: 'Token 1', target: 'Token 3', value: 5 },
-            { source: 'Token 2', target: 'Token 4', value: 15 },
-            { source: 'Token 3', target: 'Token 4', value: 10 },
-            { source: 'Token 4', target: 'Token 5', value: 20 },
-        ],
-    };
-
-    const voronoiPoints = [
-        { x: 100, y: 200, label: 'Token 1' },
-        { x: 200, y: 100, label: 'Token 2' },
-        { x: 300, y: 300, label: 'Token 3' },
-        { x: 400, y: 150, label: 'Token 4' },
-        { x: 500, y: 250, label: 'Token 5' },
-    ];
-
-    return (
-        <div className="container">
-            <h1>Animation Concepts Visualization</h1>
-
-            <section>
-                <h2>1. Bezier Curves</h2>
-                <BezierCurve controlPointX={bezierControlX} controlPointY={bezierControlY} />
-                <label>
-                    Control Point X:
-                    <input
-                        type="range"
-                        min="100"
-                        max="300"
-                        value={bezierControlX}
-                        onChange={(e) => setBezierControlX(Number(e.target.value))}
-                    />
-                </label>
-                <label>
-                    Control Point Y:
-                    <input
-                        type="range"
-                        min="100"
-                        max="300"
-                        value={bezierControlY}
-                        onChange={(e) => setBezierControlY(Number(e.target.value))}
-                    />
-                </label>
-            </section>
-
-            <section>
-                <h2>2. Elastic Animation</h2>
-                <ElasticAnimation tension={elasticTension} friction={elasticFriction} />
-                <label>
-                    Tension:
-                    <input
-                        type="range"
-                        min="100"
-                        max="300"
-                        value={elasticTension}
-                        onChange={(e) => setElasticTension(Number(e.target.value))}
-                    />
-                </label>
-                <label>
-                    Friction:
-                    <input
-                        type="range"
-                        min="5"
-                        max="20"
-                        value={elasticFriction}
-                        onChange={(e) => setElasticFriction(Number(e.target.value))}
-                    />
-                </label>
-            </section>
-
-            <section>
-                <h2>3. Dimensional Depth</h2>
-                <DimensionalDepth />
-            </section>
-
-            <section>
-                <h2>4. Force-Directed Graph</h2>
-                <ForceDirectedGraph distance={forceDistance} />
-                <label>
-                    Link Distance:
-                    <input
-                        type="range"
-                        min="50"
-                        max="200"
-                        value={forceDistance}
-                        onChange={(e) => setForceDistance(Number(e.target.value))}
-                    />
-                </label>
-            </section>
-
-            <section>
-                <h2>5. React Spring Animation</h2>
-                <ReactSpringAnimation />
-            </section>
-
-            <section>
-                <h2>6. React Three Fiber Visualization</h2>
-                <ReactThreeFiberVisualization />
-            </section>
-
-            <section>
-                <h2>7. Attention Heatmap</h2>
-                <Heatmap data={attentionWeights} labels={tokens} />
-            </section>
-
-            <section>
-                <h2>8. Attention Chord Diagram</h2>
-                <ChordDiagram matrix={attentionMatrix} labels={tokens} />
-            </section>
-
-            <section>
-                <h2>9. Attention Sankey Diagram</h2>
-                <SankeyDiagram data={sankeyData} />
-            </section>
-
-            <section>
-                <h2>10. Voronoi Diagram</h2>
-                <VoronoiDiagram points={voronoiPoints} />
-            </section>
+  return (
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8 font-inter">
+      <div className="max-w-7xl mx-auto">
+        {/* Application Title */}
+        <h1 className="text-4xl font-bold text-center text-primary mb-12">
+          Transformer Insight Explorer
+        </h1>
+        {/* Grid layout for VectorArithmetic and VectorVisualization */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-card shadow-lg rounded-lg p-6">
+            {/* VectorArithmetic Component for performing vector operations */}
+            <VectorArithmetic onCompute={handleCompute} />
+          </div>
+          <div className="bg-card shadow-lg rounded-lg p-6">
+            {/* VectorVisualization Component for displaying vector operations */}
+            <VectorVisualization operation={operation} />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
-export default AppPage;
+export default App;

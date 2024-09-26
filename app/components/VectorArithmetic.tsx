@@ -36,7 +36,7 @@ const VectorArithmetic: React.FC<VectorArithmeticProps> = ({ onCompute }) => {
   const [selectedBaseWord, setSelectedBaseWord] = useState<string>('');
   const [operator1, setOperator1] = useState<string>('');
   const [operator2, setOperator2] = useState<string>('');
-
+  
   // Create options for word selection from embeddings
   const wordOptions: OptionType[] = Object.keys(embeddings).map((word) => ({
     label: word,
@@ -87,9 +87,8 @@ const VectorArithmetic: React.FC<VectorArithmeticProps> = ({ onCompute }) => {
   };
 
   return (
-    <div className="vector-arithmetic">
-      {/* Section Title */}
-      <h2 className="section-title text-primary">Vector Operations</h2>
+    <div className="vector-arithmetic bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Vector Operations</h2>
       {/* Form for selecting vectors and operators */}
       <div className="select-container">
         <select
@@ -158,13 +157,13 @@ const VectorArithmetic: React.FC<VectorArithmeticProps> = ({ onCompute }) => {
         </select>
       </div>
       {/* Compute Button to trigger the vector operation */}
-      <button
+      <Button
         onClick={handleComputeClick}
         disabled={!selectedWord1 || !operator1 || !selectedWord2 || !operator2 || !selectedBaseWord}
-        className="compute-button bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-muted disabled:cursor-not-allowed mt-4"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200"
       >
         Compute
-      </button>
+      </Button>
     </div>
   );
 };

@@ -12,6 +12,8 @@ export const setupSVG = (svgRef: React.RefObject<SVGSVGElement>, dimensions: { w
     .attr("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`)
     .attr("preserveAspectRatio", "xMidYMid meet");
 
+  svg.selectAll("*").remove(); // Clear previous content
+
   const margin = { top: 40, right: 40, bottom: 40, left: 40 };
   const width = dimensions.width - margin.left - margin.right;
   const height = dimensions.height - margin.top - margin.bottom;
@@ -20,13 +22,13 @@ export const setupSVG = (svgRef: React.RefObject<SVGSVGElement>, dimensions: { w
     .attr('class', 'main-group')
     .attr('transform', `translate(${margin.left},${margin.top})`);
 
-  // Set up scales
+  // Set up scales with a fixed domain
   const xScale = d3.scaleLinear()
-    .domain([-2, 2])  // Adjust this based on your data range
+    .domain([-2, 2])
     .range([0, width]);
 
   const yScale = d3.scaleLinear()
-    .domain([-2, 2])  // Adjust this based on your data range
+    .domain([-2, 2])
     .range([height, 0]);
 
   // Add axes
@@ -35,11 +37,12 @@ export const setupSVG = (svgRef: React.RefObject<SVGSVGElement>, dimensions: { w
 
   g.append('g')
     .attr('class', 'x-axis')
-    .attr('transform', `translate(0,${height})`)
+    .attr('transform', `translate(0,${height / 2})`)
     .call(xAxis);
 
   g.append('g')
     .attr('class', 'y-axis')
+    .attr('transform', `translate(${width / 2},0)`)
     .call(yAxis);
 
   // Add grid lines

@@ -26,26 +26,20 @@ const VectorVisualization: React.FC<VectorVisualizationProps> = ({ operation }) 
   const [animationComplete, setAnimationComplete] = useState(false);
 
   const { xScale, yScale, colorScale } = useMemo(() => ({
-    xScale: d3.scaleLinear().domain([0, 2]).range([0, dimensions.width - 100]),
-    yScale: d3.scaleLinear().domain([0, 2]).range([dimensions.height - 100, 0]),
+    xScale: d3.scaleLinear().domain([-2, 2]).range([0, dimensions.width - 100]),
+    yScale: d3.scaleLinear().domain([-2, 2]).range([dimensions.height - 100, 0]),
     colorScale: d3.scaleOrdinal<string>()
       .domain(['Vector 1', 'Vector 2', 'Base Vector', 'Result Vector', 'Nearest Words'])
       .range(['#FF5A5F', '#00A699', '#FC642D', '#4D5663', '#FFB400'])
   }), [dimensions]);
 
   useEffect(() => {
-    if (!svgRef.current || !operation) {
-      console.warn('SVG not ready or operation is null');
-      return;
-    }
+    if (!svgRef.current || !operation) return;
     setupSVG(svgRef, dimensions);
-  }, [dimensions]);
+  }, [dimensions, operation]);
 
   useEffect(() => {
-    if (!svgRef.current || !operation) {
-      console.warn('SVG not ready or operation is null');
-      return;
-    }
+    if (!svgRef.current || !operation) return;
     const svg = d3.select(svgRef.current);
     svg.select("g").selectAll("*").remove();
     const g = svg.select("g");
@@ -63,7 +57,7 @@ const VectorVisualization: React.FC<VectorVisualizationProps> = ({ operation }) 
       
       resultPoint
         .attr("data-tooltip-id", "neighbors-tooltip")
-        .attr("data-tooltip-content", " "); // Space to trigger the tooltip
+        .attr("data-tooltip-content", " ");
     }
   }, [animationComplete, nearestWords]);
 

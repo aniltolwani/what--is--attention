@@ -69,6 +69,14 @@ const VectorArithmetic: React.FC = () => {
     setAnimationStep(0)
   }
 
+  const clearExpression = () => {
+    setExpression([]);
+    setBaseVector(null);
+    setDirectionVector(null);
+    setResultVector(null);
+    setAnimationStep(0);
+  };
+
   useEffect(() => {
     if (baseVector && directionVector) {
       const timer = setInterval(() => {
@@ -138,6 +146,13 @@ const VectorArithmetic: React.FC = () => {
           disabled={expression.length !== 5}
         >
           Calculate <ArrowRightIcon className="w-4 h-4 ml-2" />
+        </Button>
+
+        <Button 
+          onClick={clearExpression}
+          className="bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-xl transition-all"
+        >
+          Clear
         </Button>
       </div>
 
@@ -296,3 +311,9 @@ export default VectorArithmetic
 // - support for more natural language, so instead of v1 v2 - v3 you can do things like "king is to queen as man is to ______"
 // "random" button that makes a random expression and calculates it
 // challenge mode - you can only use a certain number of words from the original set
+
+
+// most important:
+// 1. make the animation smoother, make it an actual tip to tail arrow
+// 2. make a nice animation when the movement animation is finished, the dots that are nearby in semantic space fade in
+// 4. natural language support: "king is to queen as man is to ______"

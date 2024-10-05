@@ -6,7 +6,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ArrowRightIcon, PlusIcon, MinusIcon } from "lucide-react"
-import { VT323 } from 'next/font/google'
 
 type Vector = [number, number]
 
@@ -24,12 +23,17 @@ const wordVectors: Record<string, Vector> = {
 }
 
 const VectorArithmetic: React.FC = () => {
+  // state variables for managing the vector arithmetic expression and visualization
+  // expression is an array of words and operators i.e. ["man", "king", "-", "queen", "+", "prince"]
   const [expression, setExpression] = useState<(string | '+' | '-')[]>([])
+  // baseVector is the starting vector for the expression (i.e. the last word in the expression)
   const [baseVector, setBaseVector] = useState<Vector | null>(null)
   const [directionVector, setDirectionVector] = useState<Vector | null>(null)
   const [resultVector, setResultVector] = useState<Vector | null>(null)
   const [animationStep, setAnimationStep] = useState(0)
   const [showTooltip, setShowTooltip] = useState(false)
+  const [showNearestWords, setShowNearestWords] = useState(false);
+  const [activeWords, setActiveWords] = useState<string[]>([]);
 
   const addToExpression = (word: string) => {
     if (expression.length < 5) {
@@ -67,6 +71,7 @@ const VectorArithmetic: React.FC = () => {
     setDirectionVector(direction)
     setResultVector(result)
     setAnimationStep(0)
+    setActiveWords([word1, word2, word3])
   }
 
   const clearExpression = () => {
@@ -75,13 +80,26 @@ const VectorArithmetic: React.FC = () => {
     setDirectionVector(null);
     setResultVector(null);
     setAnimationStep(0);
+    setActiveWords([]);
+    setShowNearestWords(false);
   };
 
+  // this useEffect is used to animate the direction vector being applied to the base vector
+  // In essence, when we call calculateResult, we set the baseVector, directionVector, and resultVector
+  // Thus, the useEffect will know that it should animate the direction vector being applied to the base vector
+  // The animation is done using setInterval, which is a function that calls a function repeatedly with a fixed time delay between each call.
+  // In this case, it's called every 1500ms
+  // The animationStep is used to control the animation order. 
+  // In the code below, 
+  //    step1: The direction vector (arrow) is drawn between the first two words
+  //    step2: The base vector (green dot) appears
+  //    step3: The direction vector moves and transforms to show the operation on the base vector
+  //    step4: The result vector (purple dot) appears with its tooltip
   useEffect(() => {
     if (baseVector && directionVector) {
       const timer = setInterval(() => {
         setAnimationStep((prev) => {
-          if (prev >= 4) {
+          if (prev >= 5) {  // Changed from 4 to 5
             clearInterval(timer)
             return prev
           }
@@ -111,16 +129,16 @@ const VectorArithmetic: React.FC = () => {
 
   return (
     <div className="p-8 max-w-6xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800 text-center">Vector Arithmetic Interface</h1>
+      <h1 className="text-6xl font-bold mb-8 text-gray-800 text-center">Vector Arithmetic Interface</h1>
       
       <div className="flex flex-wrap gap-4 mb-8 justify-center">
         <Select onValueChange={addToExpression}>
-          <SelectTrigger className="w-[180px] bg-white shadow-md hover:shadow-lg transition-shadow">
+          <SelectTrigger className="w-[240px] bg-white shadow-md hover:shadow-lg transition-shadow text-2xl">
             <SelectValue placeholder="Select a word" />
           </SelectTrigger>
           <SelectContent className="bg-white">
             {Object.keys(wordVectors).map((word) => (
-              <SelectItem key={word} value={word}>{word}</SelectItem>
+              <SelectItem key={word} value={word} className="text-2xl">{word}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -128,53 +146,61 @@ const VectorArithmetic: React.FC = () => {
         <Button 
           onClick={() => addOperator('+')} 
           disabled={expression.length % 2 === 0 || expression.length >= 4}
-          className="bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg transition-all"
+          className="bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg transition-all text-3xl p-6"
         >
-          <PlusIcon className="w-4 h-4" />
+          <PlusIcon className="w-8 h-8" />
         </Button>
         <Button 
           onClick={() => addOperator('-')} 
           disabled={expression.length % 2 === 0 || expression.length >= 4}
-          className="bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all"
+          className="bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg transition-all text-3xl p-6"
         >
-          <MinusIcon className="w-4 h-4" />
+          <MinusIcon className="w-8 h-8" />
         </Button>
         
         <Button 
           onClick={calculateResult} 
-          className="bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-xl transition-all" 
+          className="bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-xl transition-all text-3xl p-6" 
           disabled={expression.length !== 5}
         >
-          Calculate <ArrowRightIcon className="w-4 h-4 ml-2" />
+          Calculate <ArrowRightIcon className="w-8 h-8 ml-2" />
         </Button>
 
         <Button 
           onClick={clearExpression}
-          className="bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-xl transition-all"
+          className="bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-xl transition-all text-3xl p-6"
         >
           Clear
         </Button>
       </div>
 
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-3 text-gray-700">Expression:</h2>
-        <Input value={expression.join(' ')} readOnly className="text-lg bg-white shadow-inner" />
+        <h2 className="text-4xl font-semibold mb-3 text-gray-700">Expression:</h2>
+        <Input value={expression.join(' ')} readOnly className="text-3xl bg-white shadow-inner p-4" />
       </div>
 
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-3 text-gray-700">Vector Visualization:</h2>
+        <h2 className="text-4xl font-semibold mb-3 text-gray-700">Vector Visualization:</h2>
         <div className="relative h-[800px] border border-gray-300 bg-white rounded-lg shadow-inner overflow-hidden">
-          {Object.entries(wordVectors).map(([word, vector]) => {
-            const { left, top } = vectorToPosition(vector)
-            return (
-              <div key={word} className="absolute" style={{ left, top }}>
-                <div className="w-3 h-3 bg-blue-500 rounded-full shadow-sm" />
-                <span className="absolute left-4 top-0 text-sm text-gray-600">{word}</span>
-              </div>
-            )
-          })}
-          
           <AnimatePresence>
+            {activeWords.map((word) => {
+              const vector = wordVectors[word];
+              const { left, top } = vectorToPosition(vector);
+              return (
+                <motion.div
+                  key={word}
+                  className="absolute"
+                  style={{ left, top }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="w-16 h-16 bg-blue-500 rounded-full shadow-md" />
+                  <span className="absolute left-20 top-4 text-3xl font-semibold text-gray-700">{word}</span>
+                </motion.div>
+              );
+            })}
+
             {directionVector && animationStep >= 1 && (
               <motion.svg
                 className="absolute top-0 left-0 w-full h-full"
@@ -188,18 +214,24 @@ const VectorArithmetic: React.FC = () => {
                   x2={`${(wordVectors[expression[2] as string][0] + 3) * 10}%`}
                   y2={`${100 - (wordVectors[expression[2] as string][1] + 3) * 10}%`}
                   stroke="orange"
-                  strokeWidth="2"
+                  strokeWidth="4"
                   initial={{ pathLength: 0 }}
                   animate={{ pathLength: 1 }}
                   transition={{ duration: 1 }}
                 />
+
                 <motion.polygon
-                  points="0,-6 12,0 0,6"
+                  points="0,-12 24,0 0,12"
                   fill="orange"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  transform={`translate(${(wordVectors[expression[2] as string][0] + 3) * 10}%, ${100 - (wordVectors[expression[2] as string][1] + 3) * 10}%) rotate(${Math.atan2(directionVector[1], directionVector[0]) * 180 / Math.PI})`}
+                  initial={{ 
+                    opacity: 1,
+                    transform: `translate(${(wordVectors[expression[0] as string][0] + 3) * 10}%, ${100 - (wordVectors[expression[0] as string][1] + 3) * 10}%) rotate(${Math.atan2(-directionVector[1], -directionVector[0]) * 180 / Math.PI}deg)`
+                  }}
+                  animate={{ 
+                    opacity: 1,
+                    transform: `translate(${(wordVectors[expression[2] as string][0] + 3) * 10}%, ${100 - (wordVectors[expression[2] as string][1] + 3) * 10}%) rotate(${Math.atan2(-directionVector[1], -directionVector[0]) * 180 / Math.PI}deg)`
+                  }}
+                  transition={{ duration: 1 }}
                 />
               </motion.svg>
             )}
@@ -208,12 +240,11 @@ const VectorArithmetic: React.FC = () => {
               <motion.div
                 className="absolute"
                 style={vectorToPosition(baseVector)}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="w-4 h-4 bg-green-500 rounded-full shadow-sm" />
-                <span className="absolute left-4 top-0 text-sm font-bold text-green-700">Base</span>
+                <div className="w-20 h-20 bg-green-500 rounded-full shadow-md" />
               </motion.div>
             )}
 
@@ -230,7 +261,7 @@ const VectorArithmetic: React.FC = () => {
                   x2={`${(wordVectors[expression[2] as string][0] + 3) * 10}%`}
                   y2={`${100 - (wordVectors[expression[2] as string][1] + 3) * 10}%`}
                   stroke="orange"
-                  strokeWidth="2"
+                  strokeWidth="4"
                   initial={{
                     x1: `${(wordVectors[expression[0] as string][0] + 3) * 10}%`,
                     y1: `${100 - (wordVectors[expression[0] as string][1] + 3) * 10}%`,
@@ -246,22 +277,22 @@ const VectorArithmetic: React.FC = () => {
                   }}
                   transition={{ duration: 1 }}
                 />
+
                 <motion.polygon
-                  points="0,-6 12,0 0,6"
-                  fill="red"
+                  points="0,-12 24,0 0,12"
+                  fill="orange"
                   initial={{
-                    opacity: 0,
-                    transform: `translate(${(wordVectors[expression[2] as string][0] + 3) * 10}%, ${100 - (wordVectors[expression[2] as string][1] + 3) * 10}%) rotate(${Math.atan2(directionVector[1], directionVector[0]) * 180 / Math.PI})`,
+                    transform: `translate(${(wordVectors[expression[2] as string][0] + 3) * 10}%, ${100 - (wordVectors[expression[2] as string][1] + 3) * 10}%) rotate(${Math.atan2(-directionVector[1], -directionVector[0]) * 180 / Math.PI}deg)`,
                   }}
                   animate={{
-                    opacity: 1,
-                    transform: `translate(${(baseVector[0] + (expression[3] === '-' ? -directionVector[0] : directionVector[0]) + 3) * 10}%, ${100 - (baseVector[1] + (expression[3] === '-' ? -directionVector[1] : directionVector[1]) + 3) * 10}%) rotate(${Math.atan2(expression[3] === '-' ? -directionVector[1] : directionVector[1], expression[3] === '-' ? -directionVector[0] : directionVector[0]) * 180 / Math.PI})`,
+                    transform: `translate(${(baseVector[0] + (expression[3] === '-' ? -directionVector[0] : directionVector[0]) + 3) * 10}%, ${100 - (baseVector[1] + (expression[3] === '-' ? -directionVector[1] : directionVector[1]) + 3) * 10}%) rotate(${Math.atan2((expression[3] === '-' ? -directionVector[1] : directionVector[1]), (expression[3] === '-' ? -directionVector[0] : directionVector[0])) * 180 / Math.PI}deg)`,
+                    fill: ["orange", "red"],
                   }}
                   transition={{ duration: 1 }}
                 />
               </motion.svg>
             )}
-
+  
             {resultVector && animationStep >= 4 && (
               <motion.div
                 className="absolute"
@@ -269,26 +300,47 @@ const VectorArithmetic: React.FC = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
+                onAnimationComplete={() => setShowNearestWords(true)}
               >
                 <div
-                  className="w-5 h-5 bg-purple-500 rounded-full shadow-sm cursor-pointer"
+                  className="w-20 h-20 bg-purple-500 rounded-full shadow-md cursor-pointer"
                   onMouseEnter={() => setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
                 />
-                <span className="absolute left-6 top-0 text-sm font-bold text-purple-700">Result</span>
                 {showTooltip && (
                   <div
-                    className="absolute left-6 top-6 bg-white border border-gray-300 rounded-lg p-3 z-10 shadow-lg"
+                    className="absolute left-24 top-24 bg-white border border-gray-300 rounded-lg p-6 z-10 shadow-lg"
                   >
-                    <h3 className="font-bold mb-2 text-gray-800">Closest words:</h3>
-                    <ul className="space-y-1">
+                    <h3 className="font-bold mb-4 text-gray-800 text-3xl">Closest words:</h3>
+                    <ul className="space-y-2">
                       {findSimilarWords(resultVector).map((word) => (
-                        <li key={word} className="text-gray-600">{word}</li>
+                        <li key={word} className="text-gray-600 text-2xl">{word}</li>
                       ))}
                     </ul>
                   </div>
                 )}
               </motion.div>
+            )}
+
+            {showNearestWords && (
+              <AnimatePresence>
+                {findSimilarWords(resultVector).map((word, index) => {
+                  const { left, top } = vectorToPosition(wordVectors[word]);
+                  return (
+                    <motion.div
+                      key={word}
+                      className="absolute"
+                      style={{ left, top }}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, delay: index * 0.2 }}
+                    >
+                      <div className="w-16 h-16 bg-gradient-to-r from-pink-200 to-pink-400 rounded-full shadow-md" />
+                      <span className="absolute left-20 top-4 text-3xl font-semibold text-pink-600">{word}</span>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             )}
           </AnimatePresence>
         </div>
